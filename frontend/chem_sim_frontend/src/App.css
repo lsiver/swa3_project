@@ -1,0 +1,107 @@
+.main-content {
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+  min-height: calc(100vh - 80px);
+}
+
+.controls-panel {
+  flex: 1;
+  max-width: 350px;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  height: fit-content;
+}
+
+.results-panel {
+  flex: 2;
+  min-width: 0;
+}
+
+.parameter {
+  margin: 20px 0;
+}
+
+.parameter label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.parameter input, .parameter select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.run-button {
+  width: 100%;
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 15px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 20px;
+  transition: background-color 0.2s;
+}
+
+.run-button:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.run-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #dc3545;
+  margin-top: 15px;
+  padding: 10px;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+}
+
+.results-summary {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #e9ecef;
+  border-radius: 8px;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.result-item {
+  padding: 10px;
+  background: white;
+  border-radius: 4px;
+  border-left: 4px solid #007bff;
+}
+
+.plot-container {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.App-header {
+  text-align: center;
+  padding: 20px;
+  background: #282c34;
+  color: white;
+  margin-bottom: 0;
+}

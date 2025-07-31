@@ -1,0 +1,345 @@
+import React, { useState } from 'react';
+import Plot from 'react-plotly.js';
+import './App.css';
+
+function App() {
+const API_BASE_URL = process.env.NODE_ENV === 'production'
+? 'https://swa3-project.onrender.com'
+: 'http://127.0.0.1:5000';
+
+  const [parameters, setParameters] = useState({
+    component_a: 'Toluene',
+    component_b: 'Benzene',
+    feed_composition: 0.8,
+    distillate_purity: 0.95,
+    bottoms_purity: 0.05,
+    pressure: 1.0,
+    reflux_ratio: 2.0
+  });
+
+  const [results, setResults] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+    const runSimulation = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('${API_BASE_URL}/api/simulate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(parameters)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setResults(data);
+      } else {
+        setError(data.error);
+      }
+    } catch (err) {
+      setError('Failed to connect to backend');
+    }
+
+    setLoading(false);
+    };
+
+
+
+    const rescrapeAntoine = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+    const response = await fetch('${API_BASE_URL}/api/rescrapeAntoine', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({flag:1})
+    });
+
+    if (response.ok) {
+    console.log('Antoine data re-scraped from NIST')}
+    const data = await response.json();
+
+    } catch (err) {
+    setError('Failed to connect to backend');
+    }
+    setLoading(false)
+    }
+
+const createPlotlyTraces = () => {
+  if (!results?.results?.plot_data) return [];
+
+  const traces = [];
+  const { plot_data } = results.results;
+
+  // VLE data / curve
+  traces.push({
+    x: plot_data.vle_curve.x,
+    y: plot_data.vle_curve.y,
+    type: 'scatter',
+    mode: 'lines',
+    name: 'VLE Curve',
+    line: { color: 'red', width: 3 }
+  });
+
+  // x = y line (45 deg)
+  traces.push({
+    x: [0, 1],
+    y: [0, 1],
+    type: 'scatter',
+    mode: 'lines',
+    name: 'y = x',
+    line: { color: 'black', dash: 'dash', width: 2 }
+  });
+
+  // rectification operating line
+  traces.push({
+    x: plot_data.rectifying_line.x,
+    y: plot_data.rectifying_line.y,
+    type: 'scatter',
+    mode: 'lines',
+    name: 'Rectification Line',
+    line: { color: 'blue', width: 2 }
+  });
+
+  // stripping section operating line
+  traces.push({
+    x: plot_data.stripping_line.x,
+    y: plot_data.stripping_line.y,
+    type: 'scatter',
+    mode: 'lines',
+    name: 'Stripping Line',
+    line: { color: 'green', width: 2 }
+  });
+
+  // step points
+  const x_stages = results.results.stages.map(stage => stage[0]);
+  const y_stages = results.results.stages.map(stage => stage[1]);
+
+  traces.push({
+    x: x_stages,
+    y: y_stages,
+    type: 'scatter',
+    mode: 'markers',
+    name: 'Theoretical Stages',
+    marker: { color: 'purple', size: 8 }
+  });
+
+  // mccabe thiele steps
+  plot_data.steps.forEach((step, index) => {
+    traces.push({
+      x: step.x,
+      y: step.y,
+      type: 'scatter',
+      mode: 'lines',
+      showlegend: false,
+      line: { color: 'lightblue', width: 2 },
+      hoverinfo: 'skip'
+    });
+  });
+
+  // feed stage
+  traces.push({
+    x: [plot_data.feed_point.x],
+    y: [plot_data.feed_point.y],
+    type: 'scatter',
+    mode: 'markers',
+    name: 'Feed Stage',
+    marker: { color: 'orange', size: 12, symbol: 'diamond' }
+  });
+
+  return traces;
+};
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1>Chemical Engineering Simulator</h1>
+      </header>
+
+      <div className="main-content">
+        <div className="controls-panel">
+          <h3>Simulation Parameters</h3>
+
+          <div className="parameter">
+            <label>Component LK:</label>
+            <select 
+              value={parameters.component_a}
+              onChange={(e) => setParameters({...parameters, component_a: e.target.value})}
+            >
+              <option value="Methane">Methane</option>
+              <option value ="Ethane">Ethane</option>
+              <option value ="Ethylene">Ethylene</option>
+              <option value ="Propane">Propane</option>
+              <option value ="Butane">Butane</option>
+              <option value ="Pentane">Pentane</option>
+              <option value ="Hexane">Hexane</option>
+              <option value="Toluene">Toluene</option>
+              <option value="Benzene">Benzene</option>
+            </select>
+          </div>
+
+          <div className="parameter">
+            <label>Component HK:</label>
+            <select 
+              value={parameters.component_b}
+              onChange={(e) => setParameters({...parameters, component_b: e.target.value})}
+            >
+              <option value="Methane">Methane</option>
+              <option value ="Ethane">Ethane</option>
+              <option value ="Ethylene">Ethylene</option>
+              <option value ="Propane">Propane</option>
+              <option value ="Butane">Butane</option>
+              <option value ="Pentane">Pentane</option>
+              <option value ="Hexane">Hexane</option>
+              <option value="Toluene">Toluene</option>
+              <option value="Benzene">Benzene</option>
+            </select>
+          </div>
+
+          <div className="parameter">
+            <label>Feed Composition (LK): {parameters.feed_composition.toFixed(2)}</label>
+            <input
+              type="range"
+              min="0.1"
+              max="0.9"
+              step="0.01"
+              value={parameters.feed_composition}
+              onChange={(e) => setParameters({
+                ...parameters,
+                feed_composition: parseFloat(e.target.value)
+              })}
+            />
+          </div>
+
+          <div className="parameter">
+            <label>Distillate Purity (LK): {parameters.distillate_purity.toFixed(2)}</label>
+            <input
+              type="range"
+              min="0.50"
+              max="0.99"
+              step="0.01"
+              value={parameters.distillate_purity}
+              onChange={(e) => setParameters({
+                ...parameters,
+                distillate_purity: parseFloat(e.target.value)
+              })}
+            />
+          </div>
+
+          <div className="parameter">
+            <label>Bottoms Purity (LK): {parameters.bottoms_purity.toFixed(3)}</label>
+            <input
+              type="range"
+              min="0.01"
+              max="0.2"
+              step="0.001"
+              value={parameters.bottoms_purity}
+              onChange={(e) => setParameters({
+                ...parameters,
+                bottoms_purity: parseFloat(e.target.value)
+              })}
+            />
+          </div>
+
+          <div className="parameter">
+            <label>Reflux Ratio: {parameters.reflux_ratio.toFixed(1)}</label>
+            <input
+              type="range"
+              min="1.1"
+              max="30.0"
+              step="0.1"
+              value={parameters.reflux_ratio}
+              onChange={(e) => setParameters({
+                ...parameters,
+                reflux_ratio: parseFloat(e.target.value)
+              })}
+            />
+          </div>
+
+          <button
+            onClick={runSimulation}
+            disabled={loading}
+            className="run-button"
+          >
+            {loading ? 'Running Simulation...' : 'RUN SIMULATION'}
+          </button>
+
+          <button
+            onClick={rescrapeAntoine}
+            disabled={loading}
+            className="run-button"
+          >
+            {loading ? 'Collecting latest Antoine data...' : 'Rebuild NIST Antoine DB'}
+          </button>
+
+          {error && <div className="error">Error: {error}</div>}
+        </div>
+
+        <div className="results-panel">
+          {results && (
+            <div>
+              <div className="results-summary">
+                <h3>Simulation Results</h3>
+                <div className="results-grid">
+                  <div className="result-item">
+                    <strong>Actual Stages:</strong> {results.results.stage_count}
+                  </div>
+                  <div className="result-item">
+                    <strong>Minimum Stages (Nmin):</strong> {results.results.Nmin?.toFixed(1)}
+                  </div>
+                  <div className="result-item">
+                    <strong>Minimum Reflux (Rmin):</strong> {results.results.Rmin?.toFixed(3)}
+                  </div>
+                  <div className="result-item">
+                    <strong>Actual Reflux:</strong> {parameters.reflux_ratio}
+                  </div>
+                </div>
+              </div>
+
+              <div className="plot-container">
+                <h3>McCabe-Thiele Diagram</h3>
+                <Plot
+                  data={createPlotlyTraces()}
+                  layout={{
+                    title: `McCabe-Thiele Diagram: ${parameters.component_a}-${parameters.component_b}`,
+                    xaxis: { 
+                      title: `Liquid Composition, LK (x) - ${parameters.component_a}`,
+                      range: [0, 1],
+                      gridcolor: '#f0f0f0'
+                    },
+                    yaxis: { 
+                      title: `Vapor Composition, LK (y) - ${parameters.component_a}`,
+                      range: [0, 1],
+                      gridcolor: '#f0f0f0'
+                    },
+                    showlegend: true,
+                    legend: {
+                      x: 0.02,
+                      y: 0.98,
+                      bgcolor: 'rgba(255,255,255,0.8)'
+                    },
+                    plot_bgcolor: 'white',
+                    paper_bgcolor: 'white',
+                    autosize: true
+                  }}
+                  style={{ width: '100%', height: '600px' }}
+                  config={{ responsive: true }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
