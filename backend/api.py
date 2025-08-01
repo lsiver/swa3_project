@@ -7,7 +7,11 @@ from chem.DA import kcalc
 from chem.DC.antoine_data_scraper import build_antoine_list, build_antoine_list_oneshot
 
 app = Flask(__name__)
-CORS(app)
+allowed_origins = [
+    'https://localhost:3000',
+    'https://swa3-project_1.onrender.com'
+]
+CORS(app, origins=['*'])
 
 def convert_numpy_to_python(obj):
     if hasattr(obj, 'item'):
