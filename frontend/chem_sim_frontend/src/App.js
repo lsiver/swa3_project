@@ -26,7 +26,7 @@ const API_BASE_URL = process.env.NODE_ENV === 'production'
     setError(null);
 
     try {
-      const response = await fetch('${API_BASE_URL}/api/simulate', {
+      const response = await fetch(`${API_BASE_URL}/api/simulate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ const API_BASE_URL = process.env.NODE_ENV === 'production'
     setError(null);
 
     try {
-    const response = await fetch('${API_BASE_URL}/api/rescrapeAntoine', {
+    const response = await fetch(`${API_BASE_URL}/api/rescrapeAntoine`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
