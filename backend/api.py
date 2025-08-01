@@ -5,11 +5,12 @@ import config
 from chem.DA.bindist import BinDist, kcalculation
 from chem.DA import kcalc
 from chem.DC.antoine_data_scraper import build_antoine_list, build_antoine_list_oneshot
+import os
 
 app = Flask(__name__)
 allowed_origins = [
-    'https://localhost:3000',
-    'https://swa3-project_1.onrender.com'
+    'http://localhost:3000',
+    'https://swa3-project-1.onrender.com'
 ]
 CORS(app, origins=['*'])
 
@@ -90,4 +91,6 @@ def health_check():
     return jsonify({'status': 'API is running!'})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT',5000))
+    app.run(host='0.0.0.0',port=port,debug=False)
+    #app.run(debug=True, port=5000)
