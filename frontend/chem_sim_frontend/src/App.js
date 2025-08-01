@@ -161,7 +161,7 @@ const createPlotlyTraces = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Chemical Engineering Simulator</h1>
+        <h1>Binary Distillation Calculator</h1>
       </header>
 
       <div className="main-content">
