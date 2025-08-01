@@ -14,7 +14,7 @@ const API_BASE_URL = process.env.NODE_ENV === 'production'
     distillate_purity: 0.95,
     bottoms_purity: 0.05,
     pressure: 1.0,
-    reflux_ratio: 2.0
+    reflux_ratio: 4.0
   });
 
   const [results, setResults] = useState(null);
