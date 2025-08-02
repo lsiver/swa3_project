@@ -316,14 +316,18 @@ const createPlotlyTraces = () => {
                 <div className="results-grid">
                   <div className="result-item">
                     <strong>
-                    Actual Stages: <Tooltip text="Required number of theoretical trays/stages required at current conditions"/>
+                    Actual Stages<Tooltip text="Required number of theoretical trays/stages required at current conditions"/>:
                     </strong> {results.results.stage_count}
                   </div>
                   <div className="result-item">
-                    <strong>Minimum Stages (Nmin):</strong> {results.results.Nmin?.toFixed(1)}
+                    <strong>
+                    Minimum Stages (Nmin)<Tooltip text="Stages required if you could operate the tower at total reflux. Theoretical minimum stages"/>:
+                    </strong> {results.results.Nmin?.toFixed(1)}
                   </div>
                   <div className="result-item">
-                    <strong>Minimum Reflux (Rmin):</strong> {results.results.Rmin?.toFixed(3)}
+                    <strong>
+                    Minimum Reflux (Rmin)<Tooltip text="Minimum reflux required in order to avoid creating a pinch-point between the stripping and rectification lines. Below this number, separation is not possible"/>:
+                    </strong> {results.results.Rmin?.toFixed(3)}
                   </div>
                   <div className="result-item">
                     <strong>Actual Reflux:</strong> {parameters.reflux_ratio}
