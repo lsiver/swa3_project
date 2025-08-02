@@ -30,8 +30,3 @@ def scrape_antoine_data(self):
             print(f"retrying... (attempt {self.request.retries +1}")
             raise self.retry(countdown = 60, exc=e)
         return {'status':'failed','error':str(e)}
-
-
-@celery.task
-def test_task():
-    return "Hello from Celery!"

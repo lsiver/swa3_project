@@ -88,7 +88,7 @@ def rescrapeAntoine():
                             'message': 'Antoine scraping already in progress',
                             'task_id': task['id'],
                             'worker': worker,
-                            'info': 'Task is already running. Please wait for it to complete.'
+                            'info': 'Task is already running.'
                         }), 409
 
         task = scrape_antoine_data.delay()
@@ -129,74 +129,6 @@ def get_task_status(task_id):
 @app.route('/api/health', methods=['GET'])
 def health_check():
     return jsonify({'status': 'API is running!'})
-
-@app.route('/api/redis-status', methods=['GET'])
-def redis_status():
-    try:
-        import redis
-        redis_url = os.environ.get('REDIS_URL')
-        r = redis.from_url(redis_url)
-        r.ping()
-        queue_length = r.llen('celery')
-
-        return jsonify({
-            'redis_connected': True,
-            'queue_length': queue_length,
-            'redis_info': r.info('memory')
-        })
-    except Exception as e:
-        return jsonify({
-            'redis_connected': False,
-            'error': str(e)
-        })
-
-@app.route('/api/celery-debug', methods=['GET'])
-def celery_debug():
-    try:
-        from celery import current_app
-
-        # Get registered tasks
-        inspect = celery.control.inspect()
-        registered = inspect.registered()
-        active_queues = inspect.active_queues()
-
-        return jsonify({
-            'registered_tasks': registered,
-            'active_queues': active_queues,
-            'celery_app_name': celery.main,
-            'broker_url': celery.conf.broker_url
-        })
-    except Exception as e:
-        return jsonify({'error': str(e)})
-
-@app.route('/api/purge-queue', methods=['POST'])
-def purge_queue():
-    try:
-        import redis
-        redis_url = os.environ.get('REDIS_URL')
-        r = redis.from_url(redis_url)
-
-        deleted = r.delete('celery')
-
-        return jsonify({
-            'success': True,
-            'message': f'Purged queue, deleted {deleted} items'
-        })
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
-
-@app.route('/api/test-celery', methods=['POST'])
-def test_celery():
-    try:
-        task = test_task.delay()
-        return jsonify({
-            'success': True,
-            'message': 'Test task started',
-            'task_id': task.id
-        })
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
-
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT',5000))
