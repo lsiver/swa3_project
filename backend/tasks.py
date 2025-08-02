@@ -8,11 +8,16 @@ celery = Celery('distillation_tasks', broker=redis_url)
 
 @celery.task(bind=True)
 def scrape_antoine_data(self):
+    print("task started: scraping NIST")
     #background task to scrape antoine data from NIST
     try:
+        print("calling oneshot")
         build_antoine_list_oneshot()
+        print("task completed")
         return {'status':'success','message':'Antoine data updated successfully'}
     except Exception as e:
+        print('task FAILED')
         if self.request.retries < 3:
+            print(f"retrying... (attempt {self.request.retries +1}")
             raise self.retry(countdown = 60, exc=e)
         return {'status':'failed','error':str(e)}
