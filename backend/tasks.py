@@ -6,6 +6,15 @@ import os
 redis_url = os.environ.get('REDIS_URL','redis://localhost:6379')
 celery = Celery('distillation_tasks', broker=redis_url)
 
+celery.conf.update(
+    broker_url=redis_url,
+    result_backend=redis_url,
+    task_serializer='json',
+    result_serializer='json',
+    accept_content=['json'],
+    result_expires=3600,
+)
+
 @celery.task(bind=True)
 def scrape_antoine_data(self):
     print("task started: scraping NIST")
