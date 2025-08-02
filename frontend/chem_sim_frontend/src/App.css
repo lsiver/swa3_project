@@ -106,15 +106,12 @@
   margin-bottom: 0;
 }
 
-/*/
-/* tooltip container */
 .tooltip-container {
   position: relative;
   display: inline-block;
   margin-left: 5px;
 }
 
-/* question mark icon */
 .tooltip-icon {
   display: inline-flex;
   align-items: center;
@@ -129,7 +126,6 @@
   cursor: help;
 }
 
-/* tooltip text */
 .tooltip-text {
   visibility: hidden;
   width: 250px;
@@ -149,7 +145,6 @@
   line-height: 1.4;
 }
 
-/* arrow pointing down */
 .tooltip-text::after {
   content: "";
   position: absolute;
@@ -161,13 +156,11 @@
   border-color: #333 transparent transparent transparent;
 }
 
-/* show tooltip on hover */
 .tooltip-container:hover .tooltip-text {
   visibility: visible;
   opacity: 1;
 }
 
-/* adjust parameter labels to inline-flex */
 .parameter label {
   display: inline-flex;
   align-items: center;
