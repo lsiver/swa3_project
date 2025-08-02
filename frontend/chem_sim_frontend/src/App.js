@@ -21,6 +21,13 @@ const API_BASE_URL = process.env.NODE_ENV === 'production'
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const Tooltip = ({ text }) => (
+    <span className="tooltip-container">
+      <span className="tooltip-icon">?</span>
+      <span className="tooltip-text">{text}</span>
+    </span>
+  );
+
     const runSimulation = async () => {
     setLoading(true);
     setError(null);
@@ -169,7 +176,10 @@ const createPlotlyTraces = () => {
           <h3>Simulation Parameters</h3>
 
           <div className="parameter">
-            <label>Component LK:</label>
+            <label>
+              Component LK:
+              <Tooltip text="Light Key component - The more volatile component that separates at the top" />
+            </label>
             <select 
               value={parameters.component_a}
               onChange={(e) => setParameters({...parameters, component_a: e.target.value})}
@@ -187,7 +197,10 @@ const createPlotlyTraces = () => {
           </div>
 
           <div className="parameter">
-            <label>Component HK:</label>
+            <label>
+              Component HK:
+              <Tooltip text="Heavy Key component - the less volatile component that is concentrated at the bottom"/>
+            </label>
             <select 
               value={parameters.component_b}
               onChange={(e) => setParameters({...parameters, component_b: e.target.value})}
@@ -205,7 +218,10 @@ const createPlotlyTraces = () => {
           </div>
 
           <div className="parameter">
-            <label>Feed Composition (LK): {parameters.feed_composition.toFixed(2)}</label>
+            <label>
+              Feed Composition (LK): {parameters.feed_composition.toFixed(2)}
+              <Tooltip text="Mole fraction of the LK component in the feed stream (0-1)" />
+            </label>
             <input
               type="range"
               min="0.1"
@@ -220,7 +236,10 @@ const createPlotlyTraces = () => {
           </div>
 
           <div className="parameter">
-            <label>Distillate Purity (LK): {parameters.distillate_purity.toFixed(2)}</label>
+            <label>
+              Distillate Purity (LK): {parameters.distillate_purity.toFixed(2)}
+              <Tooltip text="Desired mole fraction of the LK component in the overhead product. Will be equal to this number" />
+            </label>
             <input
               type="range"
               min="0.50"
@@ -235,7 +254,10 @@ const createPlotlyTraces = () => {
           </div>
 
           <div className="parameter">
-            <label>Bottoms Purity (LK): {parameters.bottoms_purity.toFixed(3)}</label>
+            <label>
+              Bottoms Purity (LK): {parameters.bottoms_purity.toFixed(3)}
+              <Tooltip text="Desired mole fraction of the LK component in the bottom product. Will be less than or equal to this number" />
+            </label>
             <input
               type="range"
               min="0.01"
@@ -250,7 +272,10 @@ const createPlotlyTraces = () => {
           </div>
 
           <div className="parameter">
-            <label>Reflux Ratio: {parameters.reflux_ratio.toFixed(1)}</label>
+            <label>
+              Reflux Ratio: {parameters.reflux_ratio.toFixed(1)}
+              <Tooltip text="Reflux ratio of the tower. Ratio of liquid returned to the tower over the distillate product" />
+            </label>
             <input
               type="range"
               min="1.1"
