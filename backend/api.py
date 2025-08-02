@@ -76,16 +76,36 @@ def simulate():
 @app.route('/api/rescrapeAntoine', methods=['POST'])
 def rescrapeAntoine():
     try:
-        data = request.json
-        flag = data.get('flag',0)
-        build_antoine_list_oneshot()
-        return jsonify({'success':True, 'message':'Antoine constants scraped from NIST'})
-
+        task = scrape_antoine_data.delay()
+        return jsonify({
+            'success':True,
+            'message':'Antoine scraping started',
+            'task_id':task.id
+        })
     except Exception as e:
-        print(f"Error: {e}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({'success': False, 'error': str(e)}), 400
+        return jsonify({'success':False, 'error':str(e)}), 400
+    #     old way of doing it without a message queue. might need this again.
+    #     data = request.json
+    #     flag = data.get('flag',0)
+    #     build_antoine_list_oneshot()
+    #     return jsonify({'success':True, 'message':'Antoine constants scraped from NIST'})
+    #
+    # except Exception as e:
+    #     print(f"Error: {e}")
+    #     import traceback
+    #     traceback.print_exc()
+    #     return jsonify({'success': False, 'error': str(e)}), 400
+
+@app.route('/api/task-status/<task_id>', methods=['GET'])
+def get_task_status(task_id):
+    task = celery.AsyncResult(task_id)
+    if task.state == 'PENDING':
+        response = {'state': 'PENDING', 'status':'Processing request'}
+    elif task.state == 'SUCCESS':
+        response = {'state': 'SUCCESS', 'result':task.result}
+    else:
+        response = {'state':'FAILURE','error':str(task.info)}
+    return jsonify(response)
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
