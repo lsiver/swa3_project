@@ -132,6 +132,25 @@ def redis_status():
             'error': str(e)
         })
 
+@app.route('/api/celery-debug', methods=['GET'])
+def celery_debug():
+    try:
+        from celery import current_app
+
+        # Get registered tasks
+        inspect = celery.control.inspect()
+        registered = inspect.registered()
+        active_queues = inspect.active_queues()
+
+        return jsonify({
+            'registered_tasks': registered,
+            'active_queues': active_queues,
+            'celery_app_name': celery.main,
+            'broker_url': celery.conf.broker_url
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT',5000))
     app.run(host='0.0.0.0',port=port,debug=False)
