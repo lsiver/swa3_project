@@ -76,15 +76,33 @@ def simulate():
 @app.route('/api/rescrapeAntoine', methods=['POST'])
 def rescrapeAntoine():
     try:
-        print(f"Redis URL: {os.environ.get('REDIS_URL', 'NOT SET')}")  # Debug line
+        inspect = celery.control.inspect()
+        active = inspect.active()
+
+        if active:
+            for worker, tasks in active.items():
+                for task in tasks:
+                    if task['name'] == 'tasks.scrape_antoine_data':
+                        return jsonify({
+                            'success': False,
+                            'message': 'Antoine scraping already in progress',
+                            'task_id': task['id'],
+                            'worker': worker,
+                            'info': 'Task is already running. Please wait for it to complete.'
+                        }), 409
+
         task = scrape_antoine_data.delay()
         return jsonify({
-            'success':True,
-            'message':'Antoine scraping started',
-            'task_id':task.id
+            'success': True,
+            'message': 'Antoine scraping started',
+            'task_id': task.id
         })
+
     except Exception as e:
-        return jsonify({'success':False, 'error':str(e)}), 400
+        print(f"Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
     #     old way of doing it without a message queue. might need this again.
     #     data = request.json
     #     flag = data.get('flag',0)
