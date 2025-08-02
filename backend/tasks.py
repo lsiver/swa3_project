@@ -2,7 +2,6 @@ from celery import Celery
 from chem.DC.antoine_data_scraper import build_antoine_list_oneshot
 from chem.DA.bindist import BinDist
 import os
-from api import app
 
 redis_url = os.environ.get('REDIS_URL','redis://localhost:6379')
 celery = Celery('distillation_tasks', broker=redis_url)
