@@ -167,6 +167,17 @@ def purge_queue():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
+@app.route('/api/test-celery', methods=['POST'])
+def test_celery():
+    try:
+        task = test_task.delay()
+        return jsonify({
+            'success': True,
+            'message': 'Test task started',
+            'task_id': task.id
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
 
 
 if __name__ == '__main__':
