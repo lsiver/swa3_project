@@ -315,7 +315,10 @@ const createPlotlyTraces = () => {
                 <h3>Simulation Results</h3>
                 <div className="results-grid">
                   <div className="result-item">
-                    <strong>Actual Stages:</strong> {results.results.stage_count}
+                    /*<strong>Actual Stages:</strong> {results.results.stage_count}*/
+                    <strong>
+                    Actual Stages: <Tooltip text="Required number of theoretical trays/stages required at current conditions"/>
+                    </strong> {results.results.stage_count}
                   </div>
                   <div className="result-item">
                     <strong>Minimum Stages (Nmin):</strong> {results.results.Nmin?.toFixed(1)}
