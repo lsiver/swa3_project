@@ -76,6 +76,7 @@ def simulate():
 @app.route('/api/rescrapeAntoine', methods=['POST'])
 def rescrapeAntoine():
     try:
+        print(f"Redis URL: {os.environ.get('REDIS_URL', 'NOT SET')}")  # Debug line
         task = scrape_antoine_data.delay()
         return jsonify({
             'success':True,
