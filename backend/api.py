@@ -5,7 +5,7 @@ import config
 from chem.DA.bindist import BinDist, kcalculation
 from chem.DA import kcalc
 from chem.DC.antoine_data_scraper import build_antoine_list, build_antoine_list_oneshot
-from tasks import scrape_antoine_data, celery, test_task
+from tasks import scrape_antoine_data, celery
 import os
 
 app = Flask(__name__)
