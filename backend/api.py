@@ -130,6 +130,23 @@ def get_task_status(task_id):
 def health_check():
     return jsonify({'status': 'API is running!'})
 
+@app.route('/api/purge-queue', methods=['POST'])
+def purge_queue():
+    try:
+        import redis
+        redis_url = os.environ.get('REDIS_URL')
+        r = redis.from_url(redis_url)
+
+        deleted = r.delete('celery')
+
+        return jsonify({
+            'success': True,
+            'message': f'Purged queue, deleted {deleted} items'
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT',5000))
     app.run(host='0.0.0.0',port=port,debug=False)
