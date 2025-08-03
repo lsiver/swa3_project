@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Plot from 'react-plotly.js';
 import './App.css';
+import distillationImage from 'Tray_Distillation_Tower.PNG';
 
 function App() {
 const API_BASE_URL = process.env.NODE_ENV === 'production'
@@ -169,6 +170,10 @@ const createPlotlyTraces = () => {
     <div className="App">
       <header className="App-header">
         <h1>Binary Distillation Calculator</h1>
+        <img src = {distillationImage}
+        alt = "Distillation Column"
+        className="header-image"
+        />
       </header>
 
       <div className="main-content">
