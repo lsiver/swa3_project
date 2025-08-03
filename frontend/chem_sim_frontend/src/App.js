@@ -373,7 +373,7 @@ const createPlotlyTraces = () => {
                     t:100
                     }
                   }}
-                  style={{ width: '100%', height: '600px' }}
+                  style={{ width: '100%', height: '700px' }}
                   config={{ responsive: true }}
                 />
               </div>
