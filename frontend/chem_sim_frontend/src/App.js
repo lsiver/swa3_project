@@ -344,35 +344,52 @@ const createPlotlyTraces = () => {
                 <h3>McCabe-Thiele Diagram</h3>
                 <Plot
                   data={createPlotlyTraces()}
-                  layout={{
-                    title: `McCabe-Thiele Diagram: ${parameters.component_a}-${parameters.component_b}`,
-                    xaxis: { 
-                      title: `Liquid Composition, LK (x) - ${parameters.component_a}`,
-                      range: [0, 1],
-                      gridcolor: '#f0f0f0'
-                    },
-                    yaxis: { 
-                      title: `Vapor Composition, LK (y) - ${parameters.component_a}`,
-                      range: [0, 1],
-                      gridcolor: '#f0f0f0'
-                    },
-                    showlegend: true,
-                    legend: {
-                      x: 0.02,
-                      y: 0.98,
-                      bgcolor: 'rgba(255,255,255,0.8)'
-                    },
-                    plot_bgcolor: 'white',
-                    paper_bgcolor: 'white',
-                    autosize: true,
-
-                    margin: {
-                    l:80,
-                    r:50,
-                    b:80,
-                    t:100
-                    }
-                  }}
+                    layout={{
+                      title: {
+                        text: `McCabe-Thiele Diagram: ${parameters.component_a}-${parameters.component_b}`,
+                        font: { size: 20 }
+                      },
+                      xaxis: {
+                        title: {
+                          text: `Liquid Composition, LK (x) - ${parameters.component_a}`,
+                          font: { size: 14 }
+                        },
+                        range: [0, 1],
+                        gridcolor: '#f0f0f0',
+                        zeroline: true,
+                        showline: true,
+                        linewidth: 1,
+                        linecolor: 'black'
+                      },
+                      yaxis: {
+                        title: {
+                          text: `Vapor Composition, LK (y) - ${parameters.component_a}`,
+                          font: { size: 14 }
+                        },
+                        range: [0, 1],
+                        gridcolor: '#f0f0f0',
+                        zeroline: true,
+                        showline: true,
+                        linewidth: 1,
+                        linecolor: 'black'
+                      },
+                      showlegend: true,
+                      legend: {
+                        x: 0.02,
+                        y: 0.98,
+                        bgcolor: 'rgba(255,255,255,0.8)'
+                      },
+                      plot_bgcolor: 'white',
+                      paper_bgcolor: 'white',
+                      autosize: true,
+                      margin: {
+                        l: 80,
+                        r: 50,
+                        b: 80,
+                        t: 100,
+                        pad: 4
+                      }
+                    }}
                   style={{ width: '100%', height: '700px' }}
                   config={{ responsive: true }}
                 />
