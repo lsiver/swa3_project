@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Plot from 'react-plotly.js';
 import './App.css';
-import distillationImage from 'Tray_Distillation_Tower.PNG';
+import distillationImage from './Tray_Distillation_Tower.PNG';
 
 function App() {
 const API_BASE_URL = process.env.NODE_ENV === 'production'
