@@ -7,5 +7,4 @@ class TestAntoineDataScraper(TestCase):
     def test_get_all_antoine_coef(self) -> None:
         T,A,B,C = get_all_antoine_coef("Benzene")
         psat = 10**(A[0] - B[0]/(C[0]+373))
-        print(psat)
         assert(1.7 <= psat <= 1.9)
