@@ -364,13 +364,13 @@ const createPlotlyTraces = () => {
                     },
                     plot_bgcolor: 'white',
                     paper_bgcolor: 'white',
-                    autosize: true
+                    autosize: true,
 
                     margin: {
                     l:80,
                     r:50,
                     b:80,
-                    t:100,
+                    t:100
                     }
                   }}
                   style={{ width: '100%', height: '600px' }}
