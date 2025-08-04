@@ -7,7 +7,7 @@ test_dir = Path(__file__).parent
 DB_PATH = test_dir / '..' / '..' / 'chem' / 'DC' / 'sim_DB'
 DB_PATH = DB_PATH.resolve()
 
-from chem.DC.tbl_antoine import add_antoine_entry, cleartable
+from chem.DC.tbl_antoine import add_antoine_entry
 
 class TestAntoineTbl(TestCase):
     def test_add_antoine_entry(self) -> None:
@@ -17,6 +17,8 @@ class TestAntoineTbl(TestCase):
             cursor.execute('SELECT * FROM Antoine WHERE chemical= ?', ("TestCase",))
             test_values = cursor.fetchall()
         test_sum = test_values[0][2]+test_values[0][3]+test_values[0][4]+test_values[0][5]+test_values[0][6]
-        cleartable()
+        #delete this from the DB afterwards
+        cursor.execute('DELETE FROM Antoine WHERE chemical = ?', ("TestCase",))
+        conn.commit()
         assert(test_sum == 706.0)
 

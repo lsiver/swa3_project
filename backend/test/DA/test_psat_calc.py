@@ -2,7 +2,6 @@ from unittest import TestCase
 
 from chem.DA.psat_calc import psat_calculation
 
-
 class TestPsatCalc(TestCase):
     def test_psat_calc(self) -> None:
         psat_toluene = psat_calculation("Toluene")
