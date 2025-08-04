@@ -7,6 +7,9 @@ from chem.DA import kcalc
 from chem.DC.antoine_data_scraper import build_antoine_list, build_antoine_list_oneshot
 from tasks import scrape_antoine_data, celery
 import os
+import sqlite3
+from datetime import datetime
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
 
 app = Flask(__name__)
 allowed_origins = [
@@ -14,6 +17,9 @@ allowed_origins = [
     'https://swa3-project-1.onrender.com'
 ]
 CORS(app, origins=['*'])
+
+SIM_COUNTER = Counter('simulations_total','Total number of simulations run')
+ANTOINE_SCRAPE_COUNTER = Counter('antoine_scrapes_total','Total number of antoine data scrapes run')
 
 def convert_numpy_to_python(obj):
     if hasattr(obj, 'item'):
@@ -26,6 +32,8 @@ def convert_numpy_to_python(obj):
 @app.route('/api/simulate', methods=['POST'])
 def simulate():
     try:
+        SIM_COUNTER.inc()
+
         data = request.json
 
         component_a = data.get('component_a', 'Toluene')
@@ -76,6 +84,8 @@ def simulate():
 @app.route('/api/rescrapeAntoine', methods=['POST'])
 def rescrapeAntoine():
     try:
+        ANTOINE_SCRAPE_COUNTER.inc()
+
         inspect = celery.control.inspect()
         active = inspect.active()
 
@@ -128,7 +138,7 @@ def get_task_status(task_id):
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    return jsonify({'status': 'API is running!'})
+    return jsonify({'status': 'API is running!'}), 200
 
 @app.route('/api/purge-queue', methods=['POST'])
 def purge_queue():
@@ -146,6 +156,23 @@ def purge_queue():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
+@app.route('/api/metrics', methods = ['GET'])
+def metrics():
+    try:
+        return jsonify({
+            'timestamp':datetime.now().isoformat(),
+            'total_simulations':int(SIM_COUNTER._value._value),
+            'total_antoine_scrapes':int(ANTOINE_SCRAPE_COUNTER._value._value),
+            'status' : 'healthy'
+        }), 200
+
+    except Exception as e:
+        return jsonify({'error':str(e)}),500
+
+
+@app.route('api/metrics/prometheus', methods =['GET'])
+def metrics_prom():
+    return generate_latest(), 200, {'Content-Type':CONTENT_TYPE_LATEST}
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT',5000))
