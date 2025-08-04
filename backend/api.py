@@ -170,7 +170,7 @@ def metrics():
         return jsonify({'error':str(e)}),500
 
 
-@app.route('api/metrics/prometheus', methods =['GET'])
+@app.route('/api/metrics/prometheus', methods =['GET'])
 def metrics_prom():
     return generate_latest(), 200, {'Content-Type':CONTENT_TYPE_LATEST}
 
