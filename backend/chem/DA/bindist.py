@@ -226,17 +226,4 @@ class BinDist:
         return plot_data
 
 
-# #     #binary_distillation_calc("Benzene","Toluene", 0.2,0.99,0.01,1,2.0,True)
-# tower = BinDist("Benzene","Toluene", 0.8,0.9,0.05,1)
-# # #tower.binary_distillation_calc("Benzene","Toluene", 0.2,0.99,0.01,1,2.0,False)
-# tower.LK_HK_init()
-# print(tower.LK,tower.HK,tower.xF1,tower.xD_LK,tower.xD_HK, tower.xB_LK,tower.xB_HK,tower.psatLK,tower.psatHK)
-# tower2 = BinDist("Toluene","Benzene", 0.8,0.95,0.05,1)
-# tower2.LK_HK_init()
-# print(tower2.LK,tower2.HK,tower2.xF1,tower2.xD_LK,tower2.xD_HK,tower2.xB_LK,tower2.xB_HK,tower2.psatLK,tower2.psatHK)
-# tower2.Nmin_calc()
-# print(tower2.Nmin)
-# print(tower2.Nmin_stages)
-# tower2.binary_distillation_calc()
-# print(tower2.stages,tower2.stage_count)
 
