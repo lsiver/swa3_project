@@ -21,12 +21,14 @@ def client(app):
 def celery_app(monkeypatch):
     celery.conf.task_always_eager = True
     celery.conf.task_eager_propagates = True
+    celery.conf.task_store_eager_result = True
     celery.conf.broker_url = 'memory://'
     celery.conf.result_backend = 'cache+memory://'
 
     yield celery
     celery.conf.task_always_eager = False
     celery.conf.task_eager_propagates = False
+    celery.conf.task_store_eager_result = False
 
 @pytest.fixture
 def celery_worker(celery_app):
