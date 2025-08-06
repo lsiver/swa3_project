@@ -28,6 +28,7 @@ class PengRobinsonEOS:
         self.omega2 = 0
         self.kij = 0
         self.initialize_crits()
+        self.alpha = 0
 
     def initialize_crits(self):
         self.Tc1, self.Pc1 = grabTcPc(self.chemical1)
@@ -77,14 +78,56 @@ class PengRobinsonEOS:
 
         return x1_values, y1_values
 
+    def calculate_vle_point2(self, x1):
+        if x1 <= 0.001:
+            x1 = 0.001
+        if x1 >= 0.999:
+            x1 = 0.999
+
+        x2 = 1 - x1
+
+        a1, b1 = calculate_pr_parameters(self.T, self.Tc1, self.Pc1, self.omega1)
+        a2, b2 = calculate_pr_parameters(self.T, self.Tc2, self.Pc2, self.omega2)
+        a12 = np.sqrt(a1*a2)*(1 - self.kij)
+
+        y1 = x1
+        y2 = 1 - y1
+
+        damping = 0.5
+        for i in range(100):
+            y1_new, y2_new = vle_equations(x1, x2, y1, y2, self.T, self.P, a1, a2, a12, b1, b2)
+            sum_y = y1_new + y2_new
+            y1_norm = y1_new/sum_y
+            y2_norm = y2_new/sum_y
+            y1_next = damping*y1_norm + (1-damping)*y1
+            y2_next = damping*y2_norm + (1-damping)*y2
+
+            if abs(y1_next - y1) < 1e-8:
+                y1 = y1_next
+                y2 = y2_next
+                break
+            y1 = y1_next
+            y2 = y2_next
+
+        if y2 < 1e-10 or x1 < 1e-10:
+            return float('inf')
+
+        alpha = (y1 * x2) / (y2 * x1)
+        return alpha
+
+    def generate_alpha(self, num_points=21):
+        x1_values = np.linspace(0.01, 0.99, num_points)
+        alphas = []
+
+        for x1 in x1_values:
+            alpha = self.calculate_vle_point2(x1)
+            alphas.append(alpha)
+
+        self.alpha = np.mean([a for a in alphas if not np.isinf(a)])
+
 def main():
-    PREOS = PengRobinsonEOS("Toluene","Benzene",300,1)
-    #Benzene
-    # PREOS = PengRobinsonEOS("Toluene","Benzene",300,1)
-    # x1, y1 = PREOS.generate_xy_data(100)
-    # plt.figure(figsize=(10,8))
-    # plt.plot(x1,y1,'b-')
-    # plt.show()
+     PREOS = PengRobinsonEOS("Benzene","Toluene", 405)
+
 
 
 if __name__ == '__main__':

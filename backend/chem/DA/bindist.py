@@ -6,6 +6,7 @@ from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 
 from .kcalc import kcalculation
+from .pengrobinson import PengRobinsonEOS
 from .psat_calc import psat_calculation
 #from ...api import convert_numpy_to_python
 
@@ -18,7 +19,7 @@ def convert_numpy_to_python(obj):
         return obj
 
 class BinDist:
-    def __init__(self, LK, HK,xF1 = 0.5,xD_LK = 0.90, xB_LK = 0.05, q=1, R = 2.0,P=1.0):
+    def __init__(self, LK, HK,xF1 = 0.5,xD_LK = 0.90, xB_LK = 0.05, q=1, R = 2.0,P=1.0,PR=False,T=373):
         self.LK = LK
         self.HK = HK
         self.Nmin = 0
@@ -28,9 +29,8 @@ class BinDist:
         self.Rmin = 0.0
         self.R = R
         self.q = q
-        #Since I am not accounting for non-ideal behavior...pressure is sort of a waste of time here.
-        # A future update
         self.P = P
+        self.T = T
         self.xF1 = xF1
         self.xF2 = 1 - xF1
         self.xD_LK = xD_LK
@@ -40,8 +40,10 @@ class BinDist:
         self.psatLK = 0
         self.psatHK = 0
         self.alpha_1_2 =1
+        self.PR = PR
         self.LK_HK_init()
         self.Rmin_calc()
+
 
     def LK_HK_init(self):
         #The order matters, could maybe solve all of this by switching the order in the API before it's even
@@ -69,7 +71,12 @@ class BinDist:
             # self.xB_HK = 1 - self.xB_LK
             self.xF2 = 1 - self.xF1
 
-        self.alpha_1_2 = kcalculation(self.LK)/kcalculation(self.HK)
+        if self.PR:
+            PengR = PengRobinsonEOS(self.LK,self.HK, self.T,self.P)
+            PengR.generate_alpha(100)
+            self.alpha_1_2 = max(PengR.alpha,1.001)
+        else:
+            self.alpha_1_2 = kcalculation(self.LK)/kcalculation(self.HK)
 
     def Nmin_calc(self):
         x = self.xD_LK
@@ -116,9 +123,13 @@ class BinDist:
         L_strip = L_rect + self.q * F
         V_strip = V_rect - (1 - self.q) * F
 
-        x_vle = np.array([0.0, 0.05, 0.1, 0.15, 0.20, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65,
-                          0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0])
-        y_vle =self.alpha_1_2*x_vle/(1+x_vle*(self.alpha_1_2-1))
+        if self.PR:
+            PengR = PengRobinsonEOS(self.LK,self.HK,self.T,self.P)
+            x_vle, y_vle = PengR.generate_xy_data(100)
+        else:
+            x_vle = np.array([0.0, 0.05, 0.1, 0.15, 0.20, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65,
+                              0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0])
+            y_vle = self.alpha_1_2 * x_vle / (1 + x_vle * (self.alpha_1_2 - 1))
         vle = interp1d(x_vle, y_vle, kind='linear', fill_value="extrapolate")
         vle_inv = interp1d(y_vle,x_vle,kind='linear',fill_value="extrapolate")
 
@@ -164,9 +175,13 @@ class BinDist:
         V_strip = V_rect - (1 - q) * F
 
         # VLE curve data
-        x_vle = np.array([0.0, 0.05, 0.1, 0.15, 0.20, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65,
-                          0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0])
-        y_vle = self.alpha_1_2 * x_vle / (1 + x_vle * (self.alpha_1_2 - 1))
+        if self.PR:
+            PengR = PengRobinsonEOS(self.LK,self.HK,self.T,self.P)
+            x_vle, y_vle = PengR.generate_xy_data(100)
+        else:
+            x_vle = np.array([0.0, 0.05, 0.1, 0.15, 0.20, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65,
+                              0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0])
+            y_vle = self.alpha_1_2 * x_vle / (1 + x_vle * (self.alpha_1_2 - 1))
         # operating lines
         x_rect = np.linspace(self.xF1, self.xD_LK, 100)
         y_rect = (L_rect / V_rect) * x_rect + self.xD_LK / (self.R + 1)
@@ -224,6 +239,3 @@ class BinDist:
             }
         }
         return plot_data
-
-
-

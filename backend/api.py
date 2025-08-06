@@ -43,9 +43,11 @@ def simulate():
         bottoms_purity = data.get('bottoms_purity', 0.05)
         pressure = data.get('pressure', 1)
         reflux_ratio = data.get('reflux_ratio', 2.0)
-
+        use_idealized = data.get('use_idealized',False)
+        use_idealized = not use_idealized
+        temperature = data.get('temperature',373)
         tower = BinDist(component_a, component_b, feed_composition,
-                        distillate_purity, bottoms_purity, 1.0, reflux_ratio,pressure)
+                        distillate_purity, bottoms_purity, 1.0, reflux_ratio,pressure,use_idealized, temperature)
 
         tower.Nmin_calc()
         tower.binary_distillation_calc()
@@ -70,7 +72,8 @@ def simulate():
                 'stages': clean_stages,
                 'stage_count': tower.stage_count,
                 'alpha_1_2': convert_numpy_to_python(tower.alpha_1_2),
-                'plot_data': plot_data
+                'plot_data': plot_data,
+                'alpha':tower.alpha_1_2
             },
             'parameters': data
         })

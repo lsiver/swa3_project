@@ -6,7 +6,7 @@ import distillationImage from './Tray_Distillation_Tower.PNG';
 function App() {
 const API_BASE_URL = process.env.NODE_ENV === 'production'
 ? 'https://swa3-project.onrender.com'
-: 'http://127.0.0.1:5000';
+: 'http://127.0.0.1:5001';
 
   const [parameters, setParameters] = useState({
     component_a: 'Toluene',
@@ -15,7 +15,9 @@ const API_BASE_URL = process.env.NODE_ENV === 'production'
     distillate_purity: 0.95,
     bottoms_purity: 0.05,
     pressure: 1.0,
-    reflux_ratio: 4.0
+    reflux_ratio: 4.0,
+    use_idealized: false,
+    temperature:405
   });
 
   const [results, setResults] = useState(null);
@@ -214,7 +216,6 @@ const createPlotlyTraces = () => {
               <option value ="Ethane">Ethane</option>
               <option value ="Ethylene">Ethylene</option>
               <option value ="Propane">Propane</option>
-              <option value ="Butane">Butane</option>
               <option value ="Pentane">Pentane</option>
               <option value ="Hexane">Hexane</option>
               <option value="Toluene">Toluene</option>
@@ -294,6 +295,57 @@ const createPlotlyTraces = () => {
             />
           </div>
 
+        <div className="parameter">
+          <label>
+            Pressure: {parameters.pressure.toFixed(1)}
+            <Tooltip text="Tower Pressure. Lower pressure is easier separation but higher condensing costs. In bar" />
+          </label>
+          <input
+            type="range"
+            min="0.1"
+            max="40"
+            step="0.1"
+            value={parameters.pressure}
+            onChange={(e) => setParameters({
+              ...parameters,
+              pressure: parseFloat(e.target.value)
+            })}
+          />
+        </div>
+
+        <div className="parameter">
+          <label>
+            Temperature: {parameters.temperature.toFixed(1)}
+            <Tooltip text="Degrees Celsius. Average tower temperature. If the relative volatility is too low, lowering this can help" />
+          </label>
+          <input
+            type="range"
+            min="-250"
+            max="700"
+            step="5"
+            value={parameters.temperature}
+            onChange={(e) => setParameters({
+              ...parameters,
+              temperature: parseFloat(e.target.value)
+            })}
+          />
+        </div>
+
+          <div className="parameter checkbox-parameter">
+            <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={parameters.use_idealized}
+              onChange={(e) => setParameters({
+                ...parameters,
+                use_idealized: e.target.checked
+              })}
+            />
+            <span>Use idealized predictions?</span>
+            <Tooltip text="Use idealized vapor-liquid equilibrium predictions instead of peng-robinson detailed calculations. When using idealized, tower pressure and temperature do not affect relative volatility" />
+            </label>
+          </div>
+
           <button
             onClick={runSimulation}
             disabled={loading}
@@ -337,7 +389,25 @@ const createPlotlyTraces = () => {
                   <div className="result-item">
                     <strong>Actual Reflux:</strong> {parameters.reflux_ratio}
                   </div>
+                  <div className="result-item">
+                    <strong>
+                    Relative Volatility (α)<Tooltip text="The ratio of volatilities between the light and heavy key components. Higher values mean easier separation"/>:
+                    </strong> {results.results.alpha?.toFixed(3) || 'N/A'}
+                  </div>
                 </div>
+
+                {results.results.alpha && results.results.alpha <= 1.05 && (
+                  <div className="volatility-warning">
+                    <strong>Warning:</strong>
+                    {results.results.alpha === 1 ? (
+                      <span> Separation is <strong>IMPOSSIBLE</strong> at current conditions (α = 1).
+                      You MUST change operating conditions: try lowering the temperature or reducing the pressure.</span>
+                    ) : (
+                      <span> Separation is very difficult (α = {results.results.alpha?.toFixed(3)}).
+                      Consider changing operating conditions for better separation: lower temperature or pressure.</span>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="plot-container">
