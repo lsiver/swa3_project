@@ -10,16 +10,16 @@ def psat_calculation(chemical,T=100.0):
     #Kelvin
     T +=273
     constants = get_all_antoine_entries_by_chem(chemical)
+    A = constants[0][2]
+    B = constants[0][3]
+    C = constants[0][4]
     for entries in constants:
-        if entries[1] == chemical:
-            #base constants
+        if (T > entries[5]) and (T < entries[6]):
             A = entries[2]
             B = entries[3]
             C = entries[4]
-            if (T > entries[5]) and (T < entries[6]):
-                A = entries[2]
-                B = entries[3]
-                C = entries[4]
-                break
+            break
     #units of Bar
     return 10**(A - (B/(T+C)))
+
+

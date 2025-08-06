@@ -2,7 +2,7 @@ from requests import get
 from bs4 import BeautifulSoup
 from contextlib import closing
 import csv
-from .tbl_antoine import add_antoine_entry, cleartable, add_many_antoine_entry
+from .tbl_antoine import add_antoine_entry, cleartable, add_many_antoine_entry, readtable
 
 '''
 Some of this is sourced from https://github.com/MUCTR3/NISTAntoine/blob/master/antoine.py
@@ -67,13 +67,13 @@ def populate_antoine_from_NIST(name):
 
 def build_antoine_list():
     cleartable()
-    chemical_list = ["Methane", "Ethane","Ethylene","Propane","Butane","Pentane","Hexane","Toluene","Benzene"]
+    chemical_list = ["Methane", "Ethane","Ethylene","Propane","Butane","Pentane","Hexane","Toluene","Benzene","Water","Ethanol","Acetone"]
     for chemical in chemical_list:
         populate_antoine_from_NIST(chemical)
 
 def build_antoine_list_oneshot():
     cleartable()
-    chemical_list = ["Methane", "Ethane","Ethylene","Propane","Butane","Pentane","Hexane","Toluene","Benzene"]
+    chemical_list = ["Methane", "Ethane","Ethylene","Propane","Butane","Pentane","Hexane","Toluene","Benzene","Water","Ethanol","Acetone"]
     big_list = []
     for chemical in chemical_list:
         Temperature, A, B, C = get_all_antoine_coef(chemical)
@@ -83,6 +83,7 @@ def build_antoine_list_oneshot():
 
 def main():
     build_antoine_list()
+    readtable()
 
 if __name__ == '__main__':
     main()
