@@ -16,7 +16,7 @@ const API_BASE_URL = process.env.NODE_ENV === 'production'
     bottoms_purity: 0.05,
     pressure: 1.0,
     reflux_ratio: 4.0,
-    use_idealized: false,
+    use_idealized: true,
     temperature:405
   });
 
