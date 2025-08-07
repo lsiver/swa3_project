@@ -387,7 +387,7 @@ const createPlotlyTraces = () => {
                     </strong> {results.results.Rmin?.toFixed(3)}
                   </div>
                   <div className="result-item">
-                    <strong>Actual Reflux:</strong> {results.results.ActualR?.toFixed(1)} {/*{parameters.reflux_ratio}*/}
+                    <strong>Actual Reflux:</strong> {results.results.ActualR?.toFixed(1)}
                   </div>
                   <div className="result-item">
                     <strong>
