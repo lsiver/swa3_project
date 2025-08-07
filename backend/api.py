@@ -73,7 +73,8 @@ def simulate():
                 'stage_count': tower.stage_count,
                 'alpha_1_2': convert_numpy_to_python(tower.alpha_1_2),
                 'plot_data': plot_data,
-                'alpha':tower.alpha_1_2
+                'alpha':tower.alpha_1_2,
+                'actualR':tower.R
             },
             'parameters': data
         })
