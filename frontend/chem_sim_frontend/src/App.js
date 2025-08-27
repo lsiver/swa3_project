@@ -216,6 +216,7 @@ const createPlotlyTraces = () => {
               <option value ="Ethane">Ethane</option>
               <option value ="Ethylene">Ethylene</option>
               <option value ="Propane">Propane</option>
+              <option value ="Butane">Butane</option>
               <option value ="Pentane">Pentane</option>
               <option value ="Hexane">Hexane</option>
               <option value="Toluene">Toluene</option>
