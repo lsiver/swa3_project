@@ -54,7 +54,7 @@ Where:
 
 Rearranging Raoult’s law gives:  
 
-yi/xi = P/Psat = alpha_i (volatility)
+yi/xi = Psat/P = alpha_i (volatility)
 
 
 By convention, you divide the lighter volatility by the heavier volatility to get the **relative volatility**.  
