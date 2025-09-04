@@ -79,7 +79,7 @@ These values are also pulled from NIST.
 
 The details of this calculation will not be discussed but the calculations are in the backend code.  
 
-
+![Screenshot](MccabeThiele.png)
 
 
 
