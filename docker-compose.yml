@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    container_name: myapp-backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app:delegated   
+      - sqlite_data:/data        
+
+  frontend:
+    build: ./frontend/chem_sim_frontend
+    container_name: myapp-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  sqlite_data:
