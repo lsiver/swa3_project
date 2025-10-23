@@ -1,0 +1,4 @@
+backend/__pycache__
+backend/venv
+backend/requirements_old.txt
+frontend/chem_sim_frontend/node_modules
