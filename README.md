@@ -81,6 +81,8 @@ The details of this calculation will not be discussed but the calculations are i
 
 ![Screenshot](MccabeThiele.png)
 
+### 10/23/2025 
+Added docker files. Should be able to run this using docker compose up and then navigate to localhost:3000
 
 
 
